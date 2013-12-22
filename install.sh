@@ -11,4 +11,4 @@ if [ -d $MY_PATH ]; then
 fi
 
 cd $MY_PATH
-ln -s $ABSOLUTE_PATH/dcc.rb dcc.rb
+ln -sf $ABSOLUTE_PATH/dcc.rb dcc.rb
