@@ -6,7 +6,7 @@
 
 function! DoxygenCommentCreator()
   let s:linenum = line(".")
-  let s:cmd = "dcc.rb " . bufname("%") . " " . s:linenum
+  let s:cmd = "echo \"" . join(getline(s:linenum,s:linenum+10)) . "\"| dcc.rb " . bufname("%") . " " . s:linenum
   let s:buf = system(s:cmd)
   call append(s:linenum-1, split(s:buf, '\n'))
 endfunction

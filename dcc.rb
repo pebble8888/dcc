@@ -88,23 +88,17 @@ else
 end
 
 str=""
-lineindex = 0;
-open(inputfilename) do |file|
-  while l = file.gets
-    lineindex += 1
-    if lineindex >= linenumber 
-      str += "\s"
-      str += l.chomp
-      if str =~ /{/ then
-        case filepattern
-        when :filepattern_objc
-          parse_objc str.split("{").at(0).strip!
-        when :filepattern_c
-          parse_c str.split("{").at(0).strip!
-        end
-        break
-      end
+while l = STDIN.gets
+  str += "\s"
+  str += l.chomp
+  if str =~ /{/ then
+    case filepattern
+    when :filepattern_objc
+      parse_objc str.split("{").at(0).strip!
+    when :filepattern_c
+      parse_c str.split("{").at(0).strip!
     end
+    break
   end
 end
 
