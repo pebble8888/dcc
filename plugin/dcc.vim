@@ -2,6 +2,12 @@
 " DoxygenCommentCreator vim plugin
 " pebble8888/dcc.vim
 " pebble8888@gmail.com
+" 2013-12-31 pebble8888 initial 
+"
+" You need if_ruby enabled vim.
+" Please check +ruby to type :version.
+"
+" Support C/C++/Objective-C function comment only
 "
 
 function! DoxygenCommentCreatorRuby()
