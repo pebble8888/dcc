@@ -33,8 +33,7 @@ def parse_objc( str )
   case str[0]
   when "+","-"
   else
-    p "No method found!"
-    return 
+    return nil
   end
   str.slice!(0).strip!
   ary = []
@@ -50,7 +49,7 @@ def parse_objc( str )
       type = $&
       #p type
       param = $'
-      param = param.split( "\s" ).at(0)
+      param = param.split("\s").at(0)
       #p param
       val = type + param
       params.push val
@@ -67,11 +66,11 @@ end
 # c
 def parse_c( str )
   ary = str.split( /[,\(\)]/ )
-  retval = ary.at(0).split( "\s").at(0)
+  retval = ary.at(0).split("\s").at(0)
   params = []
   ary.delete_at(0)
   ary.each do |val|
-    params.push val.strip!
+    params.push val.strip
   end
   comments( retval, params )
 end
@@ -97,6 +96,9 @@ for lineindex in linenumber..vim_buffer.count
     case filepattern
     when :filepattern_objc
       results = parse_objc( str.split("{").at(0).strip! )
+      unless results then
+        results = parse_c( str.split("{").at(0).strip! )
+      end
     when :filepattern_c
       results = parse_c( str.split("{").at(0).strip! )
     end
