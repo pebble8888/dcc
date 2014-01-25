@@ -12,8 +12,11 @@
 
 function! DoxygenCommentCreatorRuby()
 ruby << EOF
+# current opening file
 vim_buffer = VIM::Buffer.current
+# current file name
 inputfilename = vim_buffer.name
+# current line number (0-)
 linenumber = VIM::Buffer.current.line_number
 
 #
@@ -29,13 +32,22 @@ def comments( retval, params )
 end
 
 # objc
+# ex "- (void)method:(NSUInteger *)arg1 Hoge:(NSUInteger *)arg2" 
 def parse_objc( str )
+  unless str.length > 0 then
+    return nil
+  end
   case str[0]
   when "+","-"
   else
     return nil
   end
+  # delete first character + or -
+  # delete first space and last space
   str.slice!(0).strip!
+  # "(void)method"
+  # "(NSUInteger *)arg1 Hoge"
+  # "(NSUInteger *)arg2"
   ary = []
   while (r=str.rindex( ":")) != nil
     ary.push str.slice((r+1)..-1)
@@ -45,20 +57,27 @@ def parse_objc( str )
 
   params = []
   ary.each do |item|
+    # found (hoge)
     if item =~ /\(.*\)/ then
+      # matched text
       type = $&
-      #p type
-      param = $'
-      param = param.split("\s").at(0)
-      #p param
+      # trailing text
+      tmp = $'
+      param = tmp.strip().split("\s").at(0)
       val = type + param
       params.push val
     end
   end
-  params[-1] =~ /\(.*\)/
-  retval = $&  
-  params.delete_at(-1)
-  params.reverse!
+  if params.length > 0 then
+    # found (hoge)
+    params[-1] =~ /\(.*\)/
+    # matched text
+    retval = $&
+    params.delete_at(-1)
+    params.reverse!
+  else
+    return nil
+  end
 
   comments( retval, params )
 end
@@ -87,27 +106,36 @@ else
   exit
 end
 
+# next line ~ last line
 str=""
-for lineindex in linenumber..vim_buffer.count  
+for lineindex in linenumber..(vim_buffer.count-1)  
   l = vim_buffer[lineindex]
   str += "\s"
+  # remove last return code
   str += l.chomp
+  # found {
   if str =~ /{/ then
     case filepattern
     when :filepattern_objc
+      # .m/.mm
+      # parse for Objective-C
       results = parse_objc( str.split("{").at(0).strip! )
       unless results then
+        # parse for c
         results = parse_c( str.split("{").at(0).strip! )
       end
     when :filepattern_c
+      # .c/.cpp
       results = parse_c( str.split("{").at(0).strip! )
     end
     break
   end
 end
 
-for i in 0..(results.count-1)
-  vim_buffer.append( linenumber-1+i, results[i] )
+if results then
+  for i in 0..(results.count-1)
+    vim_buffer.append( linenumber-1+i, results[i] )
+  end
 end
 
 EOF
