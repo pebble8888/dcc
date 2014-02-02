@@ -1,19 +1,17 @@
 #!/usr/bin/env ruby
 #
 # @param    input file name
-# @param    line number
 # @return   doxygen comment 
 # @copyright pebble8888@gmail.com
 #
 
 # argument
-if ARGV.length != 2
-  puts "Usage: dcc.rb {filename} {linenumber}"
+if ARGV.length != 1
+  puts "Usage: dcc.rb {filename}"
   exit
 end
 
 inputfilename = ARGV[0]
-linenumber = ARGV[1].to_i
 
 # 
 def putcomment( retval, params )
@@ -88,6 +86,7 @@ else
 end
 
 str=""
+# read from standard input
 while l = STDIN.gets
   str += "\s"
   str += l.chomp
