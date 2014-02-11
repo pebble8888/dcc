@@ -68,7 +68,7 @@ def parse_c( str )
   params = []
   ary.delete_at(0)
   ary.each do |val|
-    params.push val.strip!
+    params.push val.strip
   end
   putcomment( retval, params )
 end
